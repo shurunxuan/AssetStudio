@@ -1,0 +1,44 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
+
+	<PropertyGroup>
+		<OutputType>Exe</OutputType>
+		<TargetFramework>net472</TargetFramework>
+		<UseWindowsForms>true</UseWindowsForms>
+		<Version>0.16.0.0</Version>
+		<AssemblyVersion>0.16.0.0</AssemblyVersion>
+		<FileVersion>0.16.0.0</FileVersion>
+		<Copyright>Copyright © Perfare 2018-2021</Copyright>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\AssetStudioUtility\AssetStudioUtility.csproj" />
+		<ProjectReference Include="..\AssetStudio\AssetStudio.csproj" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<ContentWithTargetPath Include="Libraries\x86\fmod.dll">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+			<TargetPath>x86\fmod.dll</TargetPath>
+		</ContentWithTargetPath>
+		<ContentWithTargetPath Include="Libraries\x64\fmod.dll">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+			<TargetPath>x64\fmod.dll</TargetPath>
+		</ContentWithTargetPath>
+	</ItemGroup>
+
+	<ItemGroup>
+		<PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
+    <PackageReference Include="CommandLineParser" Version="2.8.0" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Folder Include="Properties\" />
+	</ItemGroup>
+
+	<Target Name="CustomAfterBuild" AfterTargets="AfterBuild">
+		<Copy SourceFiles="$(SolutionDir)AssetStudioFBXNative\bin\Win32\$(Configuration)\AssetStudioFBXNative.dll" DestinationFolder="$(TargetDir)x86" ContinueOnError="true" />
+		<Copy SourceFiles="$(SolutionDir)AssetStudioFBXNative\bin\x64\$(Configuration)\AssetStudioFBXNative.dll" DestinationFolder="$(TargetDir)x64" ContinueOnError="true" />
+		<Copy SourceFiles="$(SolutionDir)Texture2DDecoderNative\bin\Win32\$(Configuration)\Texture2DDecoderNative.dll" DestinationFolder="$(TargetDir)x86" ContinueOnError="true" />
+		<Copy SourceFiles="$(SolutionDir)Texture2DDecoderNative\bin\x64\$(Configuration)\Texture2DDecoderNative.dll" DestinationFolder="$(TargetDir)x64" ContinueOnError="true" />
+	</Target>
+</Project>
