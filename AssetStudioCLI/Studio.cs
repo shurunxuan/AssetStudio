@@ -6,7 +6,6 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Threading;
-using System.Windows.Forms;
 using System.Xml.Linq;
 using static AssetStudioCLI.Exporter;
 using Object = AssetStudio.Object;
@@ -38,7 +37,7 @@ namespace AssetStudioCLI
         public static AssemblyLoader assemblyLoader = new AssemblyLoader();
         public static List<AssetItem> exportableAssets = new List<AssetItem>();
         public static List<AssetItem> visibleAssets = new List<AssetItem>();
-        internal static Action<string> StatusStripUpdate = x => { };
+        internal static Action<string> StatusStripUpdate = x => { Console.WriteLine(x); };
 
         public static int ExtractFolder(string path, string savePath)
         {
@@ -511,11 +510,11 @@ namespace AssetStudioCLI
             });
         }
 
-        public static void ExportSplitObjects(string savePath, TreeNodeCollection nodes)
+        public static void ExportSplitObjects(string savePath, List<TreeNode> nodes)
         {
             ThreadPool.QueueUserWorkItem(state =>
             {
-                var count = nodes.Cast<TreeNode>().Sum(x => x.Nodes.Count);
+                var count = nodes.Sum(x => x.Nodes.Count);
                 int k = 0;
                 Progress.Reset();
                 foreach (GameObjectTreeNode node in nodes)
@@ -557,7 +556,7 @@ namespace AssetStudioCLI
                         }
                         catch (Exception ex)
                         {
-                            MessageBox.Show($"Export GameObject:{j.Text} error\r\n{ex.Message}\r\n{ex.StackTrace}");
+                            Console.WriteLine($"Export GameObject:{j.Text} error\r\n{ex.Message}\r\n{ex.StackTrace}");
                         }
 
                         Progress.Report(++k, count);
@@ -599,13 +598,13 @@ namespace AssetStudioCLI
                 }
                 catch (Exception ex)
                 {
-                    MessageBox.Show($"Export Animator:{animator.Text} error\r\n{ex.Message}\r\n{ex.StackTrace}");
+                    Console.WriteLine($"Export Animator:{animator.Text} error\r\n{ex.Message}\r\n{ex.StackTrace}");
                     StatusStripUpdate("Error in export");
                 }
             });
         }
 
-        public static void ExportObjectsWithAnimationClip(string exportPath, TreeNodeCollection nodes, List<AssetItem> animationList = null)
+        public static void ExportObjectsWithAnimationClip(string exportPath, List<TreeNode> nodes, List<AssetItem> animationList = null)
         {
             ThreadPool.QueueUserWorkItem(state =>
             {
@@ -626,7 +625,7 @@ namespace AssetStudioCLI
                         }
                         catch (Exception ex)
                         {
-                            MessageBox.Show($"Export GameObject:{gameObject.m_Name} error\r\n{ex.Message}\r\n{ex.StackTrace}");
+                            Console.WriteLine($"Export GameObject:{gameObject.m_Name} error\r\n{ex.Message}\r\n{ex.StackTrace}");
                             StatusStripUpdate("Error in export");
                         }
 
@@ -659,7 +658,7 @@ namespace AssetStudioCLI
                 }
                 catch (Exception ex)
                 {
-                    MessageBox.Show($"Export Model:{name} error\r\n{ex.Message}\r\n{ex.StackTrace}");
+                    Console.WriteLine($"Export Model:{name} error\r\n{ex.Message}\r\n{ex.StackTrace}");
                     StatusStripUpdate("Error in export");
                 }
                 if (Properties.Settings.Default.openAfterExport)
@@ -669,7 +668,7 @@ namespace AssetStudioCLI
             });
         }
 
-        public static void GetSelectedParentNode(TreeNodeCollection nodes, List<GameObject> gameObjects)
+        public static void GetSelectedParentNode(List<TreeNode> nodes, List<GameObject> gameObjects)
         {
             foreach (GameObjectTreeNode i in nodes)
             {
@@ -686,19 +685,19 @@ namespace AssetStudioCLI
 
         public static TypeTree MonoBehaviourToTypeTree(MonoBehaviour m_MonoBehaviour)
         {
-            if (!assemblyLoader.Loaded)
-            {
-                var openFolderDialog = new OpenFolderDialog();
-                openFolderDialog.Title = "Select Assembly Folder";
-                if (openFolderDialog.ShowDialog() == DialogResult.OK)
-                {
-                    assemblyLoader.Load(openFolderDialog.Folder);
-                }
-                else
-                {
+            // if (!assemblyLoader.Loaded)
+            // {
+            //     var openFolderDialog = new OpenFolderDialog();
+            //     openFolderDialog.Title = "Select Assembly Folder";
+            //     if (openFolderDialog.ShowDialog() == DialogResult.OK)
+            //     {
+            //         assemblyLoader.Load(openFolderDialog.Folder);
+            //     }
+            //     else
+            //     {
                     assemblyLoader.Loaded = true;
-                }
-            }
+            //     }
+            // }
             return m_MonoBehaviour.ConvertToTypeTree(assemblyLoader);
         }
 

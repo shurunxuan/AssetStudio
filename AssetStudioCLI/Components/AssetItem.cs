@@ -1,8 +1,18 @@
-﻿using System.Windows.Forms;
-using AssetStudio;
+﻿using AssetStudio;
+using System.Collections.Generic;
 
 namespace AssetStudioCLI
 {
+    internal class ListViewItem
+    {
+        public List<string> SubItems;
+        public string Text;
+
+        public ListViewItem()
+        {
+            SubItems = new List<string>();
+        }
+    }
     internal class AssetItem : ListViewItem
     {
         public Object Asset;
@@ -16,6 +26,7 @@ namespace AssetStudioCLI
         public string UniqueID;
         public GameObjectTreeNode TreeNode;
 
+
         public AssetItem(Object asset)
         {
             Asset = asset;
@@ -24,6 +35,7 @@ namespace AssetStudioCLI
             TypeString = Type.ToString();
             m_PathID = asset.m_PathID;
             FullSize = asset.byteSize;
+            SubItems = new List<string>();
         }
 
         public void SetSubItems()
