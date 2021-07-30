@@ -13,8 +13,10 @@ execute_process(COMMAND ${DOTNET_STANDARD_EXECUTABLE} restore ${CSBUILD_AssetStu
 
 if (CMAKE_BUILD_TYPE MATCHES "Debug")
     set(CSHARP_CONFIGURATION "Debug")
-else ()
+elseif (CMAKE_BUILD_TYPE MATCHES "Release")
     set(CSHARP_CONFIGURATION "Release")
+else ()
+    set(CSHARP_CONFIGURATION "Debug")
 endif ()
 
 
